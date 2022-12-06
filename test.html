@@ -1,0 +1,42 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+
+<h1>lambcounter</h1>
+<button id=btn disabled>羊を数える</button><br>
+
+<hr>
+Sound File: <a href=https://www.youtube.com/watch?v=sKokMtb2GOg&t=111s>CC ラムダ技術部</a><br>
+App: <a href=https://github.com/codeforkosen/lambcounter/>src on GitHub</a><br>
+
+<script type="module">
+// initilize
+const audiosrc = [];
+for (let i = 1; i <= 10; i++) {
+  audiosrc.push(i.toString());
+}
+["100", "1000", "10000", "hiki", "biki", "piki", "hitsujiga"].forEach(s => audiosrc.push(s));
+const audios = {};
+for (const a of audiosrc) {
+  const audio = new Audio();
+  audio.src = `audio/${a}.mp3`;
+  audios[a] = audio;
+}
+await Promise.all(Object.values(audios));
+btn.disabled = false;
+
+// util
+const sleep = (msec) => new Promise(resolve => setTimeout(resolve, msec));
+
+const cutms = 60; // 60msec
+const playSync = async (s) => {
+  const a = audios[s.toString()];
+  a.play();
+  await sleep(a.duration * 1000 - cutms);
+};
+
+// main
+btn.onclick = async () => {
+  await playSync("hitsujiga");
+  await playSync("1");
+  await playSync("piki");
+};
+</script>

@@ -1,0 +1,24 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+
+<h1>lambcounter</h1>
+<input id=cnt value=1><button id=btn disabled>羊を数える</button><br>
+
+<hr>
+Sound File: <a href=https://www.youtube.com/watch?v=sKokMtb2GOg&t=111s>CC ラムダ技術部</a><br>
+App: <a href=https://github.com/codeforkosen/lambcounter/>src on GitHub</a><br>
+
+<script type="module">
+import { playCountLamb, sleep } from "./playCountLamb.js";
+
+let flg = false;
+btn.onclick = async () => {
+  flg = !flg;
+  btn.textContent = flg ? "数えるのをとめる" : "羊を数える";
+  for (let i = parseInt(cnt.value); i < 100000 && flg; i++) {
+    console.log(i);
+    cnt.value = i;
+    await playCountLamb(i);
+    await sleep(500);
+  }
+};
+</script>

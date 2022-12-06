@@ -1,0 +1,78 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+
+<h1>lambcounter</h1>
+<input id=cnt value=1><button id=btn disabled>羊を数える</button><br>
+
+<hr>
+Sound File: <a href=https://www.youtube.com/watch?v=sKokMtb2GOg&t=111s>CC ラムダ技術部</a><br>
+App: <a href=https://github.com/codeforkosen/lambcounter/>src on GitHub</a><br>
+
+<script type="module">
+// initilize
+const audiosrc = [];
+for (let i = 1; i <= 10; i++) {
+  audiosrc.push(i.toString());
+}
+["100", "1000", "10000", "hiki", "biki", "piki", "hitsujiga"].forEach(s => audiosrc.push(s));
+const audios = {};
+for (const a of audiosrc) {
+  const audio = new Audio();
+  audio.src = `audio/${a}.mp3`;
+  audios[a] = audio;
+}
+await Promise.all(Object.values(audios));
+btn.disabled = false;
+
+// util
+const sleep = (msec) => new Promise(resolve => setTimeout(resolve, msec));
+
+const cutms = 60; // 60msec
+const playSync = async (s) => {
+  const a = audios[s.toString()];
+  a.play();
+  await sleep(a.duration * 1000 - cutms);
+};
+
+// counter
+const hbp = ["hiki", "biki", "piki"];
+const hbpiki = [-1, 2, 0, 1, 0, 0, 2, 0, 0, 0, 2];
+export const playCountLamb = async (n) => {
+  await playSync("hitsujiga");
+  if (n > 99999 || n < 1) {
+    throw new Error("out of bounds! must be 1 - 99999");
+  }
+  let last = 0;
+  for (let i = 10000; i >= 10; i /= 10) {
+    if (n >= i) {
+      const m = Math.floor(n / i % 10);
+      if (m > 0) {
+        if (m > 1 || i == 10000) {
+          await playSync(m);
+        }
+        await playSync(i);
+        last = i;
+      }
+    }
+  }
+  const m = n % 10;
+  if (m == 0) {
+    await playSync(last == 10 ? "piki" : last == 100 ? "hiki" : "biki");
+  } else {
+    await playSync(m);
+    await playSync(hbp[hbpiki[m]])
+  }
+};
+
+// main
+let flg = false;
+btn.onclick = async () => {
+  flg = !flg;
+  btn.textContent = flg ? "数えるのをとめる" : "羊を数える";
+  for (let i = parseInt(cnt.value); i < 100000 && flg; i++) {
+    console.log(i);
+    cnt.value = i;
+    await playCountLamb(i);
+    await sleep(500);
+  }
+};
+</script>
