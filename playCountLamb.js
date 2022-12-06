@@ -8,6 +8,9 @@ const audios = {};
 for (const a of audiosrc) {
   const audio = new Audio();
   audio.src = `audio/${a}.mp3`;
+  audio.onerror = () => {
+    audio.src = `https://codeforkosen.github.io/lambcounter/audio/${a}.mp3`;
+  };
   audios[a] = audio;
 }
 await Promise.all(Object.values(audios));
